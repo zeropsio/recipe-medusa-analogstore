@@ -1,0 +1,29 @@
+zerops:
+  - setup: analogstore
+    build:
+      base: nodejs@22
+      envVariables:
+        VITE_MEDUSA_INSTANCE_URL: ${PROJECT_MEDUSA_INSTANCE_URL}
+        VITE_MEDUSA_PUBLISHABLE_KEY: ${medusa_CHANNEL_PUBLISHABLE_KEY}
+        VITE_PUBLIC_BASE_URL: ${ANALOG_STORE_URL}
+        IMGPROXY_KEY: ${imgproxy_IMGPROXY_KEY}
+        IMGPROXY_SALT: ${imgproxy_IMGPROXY_SALT}
+        IMGPROXY_URL: ${PROJECT_IMGPROXY_INSTANCE_URL}
+      buildCommands:
+        - npm i
+        - npm run build
+      deployFiles:
+        - dist
+    run:
+      base: nodejs@22
+      envVariables:
+        VITE_MEDUSA_INSTANCE_URL: ${PROJECT_MEDUSA_INSTANCE_URL}
+        VITE_MEDUSA_PUBLISHABLE_KEY: ${medusa_CHANNEL_PUBLISHABLE_KEY}
+        VITE_PUBLIC_BASE_URL: ${PROJECT_ANALOG_STORE_URL}
+        IMGPROXY_KEY: ${imgproxy_IMGPROXY_KEY}
+        IMGPROXY_SALT: ${imgproxy_IMGPROXY_SALT}
+        IMGPROXY_URL: ${PROJECT_IMGPROXY_INSTANCE_URL}
+      ports:
+        - port: 3000
+          httpSupport: true
+      start: node dist/analog/server/index.mjs
