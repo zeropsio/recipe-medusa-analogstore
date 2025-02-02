@@ -42,8 +42,14 @@
       "@spartan-ng/ui-badge-helm": [
         "./libs/ui/ui-badge-helm/src/index.ts"
       ],
+      "@spartan-ng/ui-breadcrumb-helm": [
+        "./libs/ui/ui-breadcrumb-helm/src/index.ts"
+      ],
       "@spartan-ng/ui-button-helm": [
         "./libs/ui/ui-button-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-calendar-helm": [
+        "./libs/ui/ui-calendar-helm/src/index.ts"
       ],
       "@spartan-ng/ui-card-helm": [
         "./libs/ui/ui-card-helm/src/index.ts"

@@ -8,55 +8,51 @@ import {
 	input,
 	untracked,
 } from '@angular/core';
+import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideArrowRight } from '@ng-icons/lucide';
-import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
-import { hlm } from '@spartan-ng/ui-core';
-import { HlmIconComponent, provideIcons } from '@spartan-ng/ui-icon-helm';
+import { hlm } from '@spartan-ng/brain/core';
+import { HlmButtonDirective, provideBrnButtonConfig } from '@spartan-ng/ui-button-helm';
+import { HlmIconDirective } from '@spartan-ng/ui-icon-helm';
 import type { ClassValue } from 'clsx';
 import { HlmCarouselComponent } from './hlm-carousel.component';
 
 @Component({
-	// eslint-disable-next-line @angular-eslint/component-selector
 	selector: 'button[hlm-carousel-next], button[hlmCarouselNext]',
 	standalone: true,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	encapsulation: ViewEncapsulation.None,
 	host: {
 		'[disabled]': 'isDisabled()',
-		'(click)': 'carousel.scrollNext()',
+		'(click)': '_carousel.scrollNext()',
 	},
 	hostDirectives: [{ directive: HlmButtonDirective, inputs: ['variant', 'size'] }],
-	providers: [provideIcons({ lucideArrowRight })],
-	imports: [HlmIconComponent],
+	providers: [provideIcons({ lucideArrowRight }), provideBrnButtonConfig({ variant: 'outline', size: 'icon' })],
+	imports: [NgIcon, HlmIconDirective],
 	template: `
-		<hlm-icon size="sm" name="lucideArrowRight" />
+		<ng-icon hlm size="sm" name="lucideArrowRight" />
 		<span class="sr-only">Next slide</span>
 	`,
 })
 export class HlmCarouselNextComponent {
-	protected carousel = inject(HlmCarouselComponent);
-	_userClass = input<ClassValue>('', { alias: 'class' });
-	protected _computedClass = computed(() =>
+	private readonly _button = inject(HlmButtonDirective);
+	private readonly _carousel = inject(HlmCarouselComponent);
+	public readonly userClass = input<ClassValue>('', { alias: 'class' });
+	private readonly _computedClass = computed(() =>
 		hlm(
 			'absolute h-8 w-8 rounded-full',
-			this.carousel.orientation() === 'horizontal'
+			this._carousel.orientation() === 'horizontal'
 				? '-right-12 top-1/2 -translate-y-1/2'
 				: '-bottom-12 left-1/2 -translate-x-1/2 rotate-90',
-			this._userClass(),
+			this.userClass(),
 		),
 	);
-	protected isDisabled = () => !this.carousel.canScrollNext();
+	protected readonly isDisabled = () => !this._carousel.canScrollNext();
 
 	constructor() {
-		const button = inject(HlmButtonDirective);
-
-		button.variant = 'outline';
-		button.size = 'icon';
-
 		effect(() => {
 			const computedClass = this._computedClass();
 
-			untracked(() => button.setClass(computedClass));
+			untracked(() => this._button.setClass(computedClass));
 		});
 	}
 }

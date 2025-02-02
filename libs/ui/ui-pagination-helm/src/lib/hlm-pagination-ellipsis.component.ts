@@ -1,23 +1,24 @@
 import { Component, computed, input } from '@angular/core';
-import { lucideMoreHorizontal } from '@ng-icons/lucide';
-import { hlm } from '@spartan-ng/ui-core';
-import { HlmIconComponent, provideIcons } from '@spartan-ng/ui-icon-helm';
-import { HlmPaginationLinkDirective } from './hlm-pagination-link.directive';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideEllipsis } from '@ng-icons/lucide';
+import { hlm } from '@spartan-ng/brain/core';
+import { HlmIconDirective } from '@spartan-ng/ui-icon-helm';
+import { ClassValue } from 'clsx';
 
 @Component({
 	selector: 'hlm-pagination-ellipsis',
 	standalone: true,
-	imports: [HlmPaginationLinkDirective, HlmIconComponent],
-	providers: [provideIcons({ lucideMoreHorizontal })],
+	imports: [NgIcon, HlmIconDirective],
+	providers: [provideIcons({ lucideEllipsis })],
 	template: `
 		<span [class]="_computedClass()">
-			<hlm-icon size="sm" name="lucideMoreHorizontal" />
+			<ng-icon hlm size="sm" name="lucideEllipsis" />
 			<span class="sr-only">More pages</span>
 		</span>
 	`,
 })
 export class HlmPaginationEllipsisComponent {
-	public readonly class = input('');
+	public readonly userClass = input<ClassValue>('', { alias: 'class' });
 
-	protected _computedClass = computed(() => hlm('flex h-9 w-9 items-center justify-center', this.class()));
+	protected readonly _computedClass = computed(() => hlm('flex h-9 w-9 items-center justify-center', this.userClass()));
 }

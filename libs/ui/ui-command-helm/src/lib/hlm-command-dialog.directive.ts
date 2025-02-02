@@ -1,5 +1,5 @@
 import { Directive, ElementRef, Renderer2, computed, effect, inject, input, signal } from '@angular/core';
-import { hlm, injectExposesStateProvider } from '@spartan-ng/ui-core';
+import { hlm, injectExposesStateProvider } from '@spartan-ng/brain/core';
 import type { ClassValue } from 'clsx';
 import { HlmCommandDirective } from './hlm-command.directive';
 
@@ -12,10 +12,10 @@ import { HlmCommandDirective } from './hlm-command.directive';
 	},
 })
 export class HlmCommandDialogDirective {
-	private _stateProvider = injectExposesStateProvider({ host: true });
+	private readonly _stateProvider = injectExposesStateProvider({ host: true });
 	public state = this._stateProvider.state ?? signal('closed').asReadonly();
-	private _renderer = inject(Renderer2);
-	private _element = inject(ElementRef);
+	private readonly _renderer = inject(Renderer2);
+	private readonly _element = inject(ElementRef);
 
 	public readonly userClass = input<ClassValue>('', { alias: 'class' });
 	protected _computedClass = computed(() =>
