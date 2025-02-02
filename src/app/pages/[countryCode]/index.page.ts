@@ -1,15 +1,15 @@
 import { Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MedusaService } from '../services/medusa.service';
+import { MedusaService } from '../../services/medusa.service';
 import { NgOptimizedImage } from '@angular/common';
-import { HeroComponent } from '../shared/hero.component';
+import { HeroComponent } from '../../shared/hero.component';
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-country-code',
   standalone: true,
   imports: [NgOptimizedImage, HeroComponent],
   template: `
-    <app-hero />
+    <!-- <app-hero /> -->
 
     <!-- @for (item of products()?.products; track item.id) {
     <div class="mb-6">
@@ -29,11 +29,8 @@ import { HeroComponent } from '../shared/hero.component';
     </div>
     } -->
   `,
-  styles: `
-
-  `,
 })
-export default class HomePageComponent {
-  #medusa = inject(MedusaService);
-  products = toSignal(this.#medusa.productList$());
+export default class CountryCodeComponent {
+  //   #medusa = inject(MedusaService);
+  //   products = toSignal(this.#medusa.productList$());
 }
