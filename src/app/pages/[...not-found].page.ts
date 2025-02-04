@@ -1,38 +1,35 @@
+import { RouteMeta } from '@analogjs/router';
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
+import { hlmH3, hlmMuted } from '@spartan-ng/ui-typography-helm';
+
+export const routeMeta: RouteMeta = {
+  title: 'Medusa Store - Page not found',
+};
 
 @Component({
   selector: 'app-not-found-page',
   standalone: true,
-  template: `
-    <h2>Analog</h2>
-
-    <h3>The fullstack meta-framework for Angular!</h3>
-
-    <p class="read-the-docs">
-      <a href="https://analogjs.org" target="_blank">Docs</a> |
-      <a href="https://github.com/analogjs/analog" target="_blank">GitHub</a> |
-      <a href="https://github.com/sponsors/brandonroberts" target="_blank">
-        Sponsor
-      </a>
+  imports: [HlmButtonDirective, RouterLink],
+  host: {
+    class:
+      'flex flex-col gap-4 items-center justify-center min-h-[calc(100vh-64px)]',
+  },
+  template: `<h1 class="${hlmH3} text-2xl-semi text-ui-fg-base">
+      Page not found
+    </h1>
+    <p class="text-small-regular text-ui-fg-base">
+      The page you tried to access does not exist.
     </p>
-  `,
-  styles: `
-    :host {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .read-the-docs > * {
-      color: #fff;
-    }
-
-    @media (prefers-color-scheme: light) {
-      .read-the-docs > * {
-        color: #213547;
-      }
-    }
-  `,
+    <a
+      routerLink="/"
+      size="sm"
+      class="${hlmMuted} text-xs"
+      hlmBtn
+      variant="link"
+    >
+      Back home
+    </a> `,
 })
 export default class NotFoundComponent {}

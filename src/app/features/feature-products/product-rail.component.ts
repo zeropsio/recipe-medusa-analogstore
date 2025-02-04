@@ -7,7 +7,7 @@ import { ProductPreviewComponent } from '../products/product-preview.component';
   selector: 'product-rail',
   standalone: true,
   imports: [ProductPreviewComponent],
-  template: ` <div class="content-container py-12 small:py-24">
+  template: ` <div class="container py-12 sm:py-24">
     <div class="flex justify-between mb-8">
       <h2 class="txt-xlarge">{{ collection()?.title }}</h2>
       <a href="">View all</a>

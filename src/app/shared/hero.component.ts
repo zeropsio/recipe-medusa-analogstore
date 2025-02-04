@@ -19,15 +19,14 @@ import {
   imports: [HlmButtonDirective, NgIcon, HlmIconDirective],
   providers: [provideIcons({ lucideGithub, lucideBell })],
   host: {
-    class:
-      'block h-[75vh] w-full border-b border-ui-border-base relative bg-ui-bg-subtle',
+    class: 'block h-[75vh] w-full border-b relative ',
   },
   template: ` <div
-    class="absolute inset-0 z-10 flex flex-col justify-center items-center text-center small:p-32 gap-6"
+    class="bg-muted text-foreground absolute inset-0 z-10 flex flex-col justify-center items-center text-center sm:p-32 gap-6"
   >
     <span>
       <h1 class="${hlmH2} border-b-0">Ecommerce Starter Template</h1>
-      <h2 class="${hlmH3}">
+      <h2 class="${hlmH3} text-muted-foreground">
         Powered by Analog.js x Spartan x Medusa.js x Zerops.io
       </h2>
     </span>

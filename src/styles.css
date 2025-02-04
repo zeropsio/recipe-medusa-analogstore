@@ -25,12 +25,12 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #535bf2;
   text-decoration: inherit;
 }
 
 a:hover {
-  color: #535bf2;
+  color: #646cff;
 }
 
 /* body {
@@ -58,9 +58,9 @@ line-height: 1.1;
   transition: border-color 0.25s;
 } */
 
-button:hover {
+/* button:hover {
   border-color: #646cff;
-}
+} */
 
 button:focus,
 button:focus-visible {
@@ -81,13 +81,13 @@ button:focus-visible {
     background-color: #ffffff;
   }
 
-  a:hover {
+  /* a:hover {
     color: #747bff;
   }
 
   button {
     background-color: #f9f9f9;
-  }
+  } */
 }
 
 :root {
@@ -109,7 +109,7 @@ button:focus-visible {
   --primary-foreground: 0 0% 98%;
   --secondary: 0 0% 96.1%;
   --secondary-foreground: 0 0% 9%;
-  --accent: 0 0% 96.1%;
+  --accent: 237 100% 69.6%;
   --accent-foreground: 0 0% 9%;
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 0 0% 98%;

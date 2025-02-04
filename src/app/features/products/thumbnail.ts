@@ -1,14 +1,21 @@
+import { NgOptimizedImage } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
+import { HlmAspectRatioModule } from '@spartan-ng/ui-aspectratio-helm';
 
 @Component({
   selector: 'product-thumbnail',
   standalone: true,
-  template: `<div class="relative w-full h-full">
+  imports: [NgOptimizedImage, HlmAspectRatioModule],
+  template: ` <div
+    class="rounded-lg relative overflow-hidden p-4 rounded-large group-hover:shadow-elevation-card-hover transition-shadow ease-in-out duration-150 aspect-[11/14] w-full"
+  >
     @if(imageSrc()){
     <img
-      [src]="imageSrc()"
+      [ngSrc]="imageSrc()"
+      width="400"
+      height="500"
       alt="Thumbnail"
-      class="absolute inset-0 object-cover object-center"
+      class="absolute inset-0 object-cover object-center w-full h-full"
     />
     } @else {
     <div
