@@ -1,5 +1,4 @@
-import { Component, inject, input, OnInit } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component, inject, input, OnInit, signal } from '@angular/core';
 import { HttpTypes } from '@medusajs/types';
 import { MedusaService } from 'src/app/services/medusa.service';
 import { ProductPreviewComponent } from '../products/product-preview.component';
@@ -16,7 +15,7 @@ import { ProductPreviewComponent } from '../products/product-preview.component';
     <ul
       class="grid grid-cols-2 small:grid-cols-3 gap-x-6 gap-y-24 small:gap-y-36"
     >
-      @for(product of products(); track product.id){
+      @for(product of products(); track product?.['id']){
       <li>
         <product-preview [product]="product" />
       </li>
@@ -24,10 +23,19 @@ import { ProductPreviewComponent } from '../products/product-preview.component';
     </ul>
   </div>`,
 })
-export class ProductRailComponent {
+export class ProductRailComponent implements OnInit {
   #medusa = inject(MedusaService);
-  products = toSignal(this.#medusa.productList$());
+  products = signal<HttpTypes.StoreProduct[]>([]);
 
   public collection = input<HttpTypes.StoreCollection | undefined>();
   public region = input.required<HttpTypes.StoreRegion | null | undefined>();
+
+  async ngOnInit(): Promise<void> {
+    const {
+      response: { products },
+    } = await this.#medusa.productList({
+      regionId: this.region()?.id || 'US',
+    });
+    this.products.set(products);
+  }
 }

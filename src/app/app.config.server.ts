@@ -7,7 +7,7 @@ import { provideImgproxyLoader } from './services/imgproxy.loader';
 const serverConfig: ApplicationConfig = {
   providers: [
     provideServerRendering(),
-    provideImgproxyLoader()
+    // provideImgproxyLoader()
   ],
 };
 

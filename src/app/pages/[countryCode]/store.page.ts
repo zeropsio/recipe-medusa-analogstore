@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-country-code',
+  selector: 'app-store-code',
   standalone: true,
   template: `
     <h2>Analog</h2>
@@ -35,4 +35,4 @@ import { Component } from '@angular/core';
     }
   `,
 })
-export default class CountryCodeComponent {}
+export default class StorePageComponent {}

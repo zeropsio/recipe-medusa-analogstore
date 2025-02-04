@@ -31,13 +31,11 @@ export class ProductPreviewComponent {
 
   // temp any
   cheapestPrice: any = computed(() => {
-    console.log(this.product());
     const productPricing = this.product()
       ? this.#medusa.getProductPrice({
           product: this.product() || null,
         })
       : null;
-    console.log(productPricing);
     return productPricing?.cheapestPrice ?? null;
   });
 }
