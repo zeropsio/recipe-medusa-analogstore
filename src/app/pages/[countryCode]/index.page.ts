@@ -1,3 +1,4 @@
+import { JsonPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
@@ -9,10 +10,11 @@ import { HeroComponent } from 'src/app/shared/hero.component';
 
 @Component({
   selector: 'country-code-default-page',
-  standalone: true,
-  imports: [HeroComponent, FeaturedProductsComponent],
+  imports: [HeroComponent, FeaturedProductsComponent, JsonPipe],
   template: `
     <app-hero />
+    <h5>Debug</h5>
+    <pre>{{ collections() | json }}</pre>
     <div class="py-12 bg-background">
       <ul class="flex flex-col gap-x-6">
         @if(collections() && this.region()){

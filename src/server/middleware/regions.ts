@@ -10,9 +10,9 @@ import {
   setCookie,
 } from 'h3';
 
-const BACKEND_URL = import.meta.env['VITE_MEDUSA_INSTANCE_URL'] || '';
+const BACKEND_URL = import.meta.env['MEDUSA_BACKEND_URL'] || '';
 const PUBLISHABLE_API_KEY =
-  import.meta.env['VITE_MEDUSA_PUBLISHABLE_KEY'] || '';
+  import.meta.env['VITE_MEDUSA_CHANNEL_PUBLISHABLE_KEY'] || '';
 const DEFAULT_REGION = import.meta.env['VITE_DEFAULT_REGION'] || 'us';
 
 export default defineEventHandler(async (event: H3Event) => {
