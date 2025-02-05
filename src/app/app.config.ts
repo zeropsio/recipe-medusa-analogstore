@@ -22,7 +22,7 @@ export const appConfig: ApplicationConfig = {
     ),
     provideClientHydration(),
     provideMedusaConfig({
-      baseUrl: import.meta.env['VITE_MEDUSA_INSTANCE_URL'] || '',
+      baseUrl: import.meta.env['VITE_MEDUSA_BACKEND_URL'] || '',
       publishableKey: import.meta.env['VITE_MEDUSA_CHANNEL_PUBLISHABLE_KEY'],
     }),
   ],

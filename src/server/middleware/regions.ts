@@ -10,7 +10,7 @@ import {
   setCookie,
 } from 'h3';
 
-const BACKEND_URL = import.meta.env['MEDUSA_BACKEND_URL'] || '';
+const BACKEND_URL = import.meta.env['VITE_MEDUSA_BACKEND_URL'] || '';
 const PUBLISHABLE_API_KEY =
   import.meta.env['VITE_MEDUSA_CHANNEL_PUBLISHABLE_KEY'] || '';
 const DEFAULT_REGION = import.meta.env['VITE_DEFAULT_REGION'] || 'us';
@@ -64,7 +64,7 @@ async function getRegionMap(cacheId: string) {
 
   if (!BACKEND_URL) {
     throw new Error(
-      'Middleware.ts: Error fetching regions. Did you set up regions in your Medusa Admin and define a MEDUSA_BACKEND_URL environment variable? Note that the variable is no longer named VITE_PUBLIC_MEDUSA_BACKEND_URL.'
+      'Middleware.ts: Error fetching regions. Did you set up regions in your Medusa Admin and define a VITE_MEDUSA_BACKEND_URL environment variable? Note that the variable is no longer named VITE_PUBLIC_VITE_MEDUSA_BACKEND_URL.'
     );
   }
 
@@ -148,7 +148,7 @@ async function getCountryCode(
   } catch (error) {
     if (import.meta.env.DEV) {
       console.error(
-        'Middleware.ts: Error getting the country code. Did you set up regions in your Medusa Admin and define a MEDUSA_BACKEND_URL environment variable? Note that the variable is no longer named VITE_PUBLIC_MEDUSA_BACKEND_URL.'
+        'Middleware.ts: Error getting the country code. Did you set up regions in your Medusa Admin and define a VITE_MEDUSA_BACKEND_URL environment variable? Note that the variable is no longer named VITE_PUBLIC_VITE_MEDUSA_BACKEND_URL.'
       );
     }
   }
