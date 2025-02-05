@@ -34,19 +34,77 @@ export class MedusaService {
     });
   }
 
-  public productList$(): Observable<HttpTypes.StoreProduct[]> {
-    // return this.#http.get<StoreProductListResponse>(
-    //   `${this.#medusaConfig.baseUrl}/store/products`,
-    //   {
-    //     headers: {
-    //       'x-publishable-api-key': this.#medusaConfig.publishableKey || '',
-    //     },
-    //   }
-    // );
+  public async productList({
+    pageParam = 1,
+    queryParams,
+    countryCode,
+    regionId,
+  }: {
+    pageParam?: number;
+    queryParams?: HttpTypes.FindParams & HttpTypes.StoreProductParams;
+    countryCode?: string;
+    regionId?: string;
+  }): Promise<{
+    response: { products: HttpTypes.StoreProduct[]; count: number };
+    nextPage: number | null;
+    queryParams?: HttpTypes.FindParams & HttpTypes.StoreProductParams;
+  }> {
+    if (!countryCode && !regionId) {
+      throw new Error('Country code or region ID is required');
+    }
 
-    return from(this.#sdk.store.product.list()).pipe(
-      map((response) => response.products)
-    );
+    let region: HttpTypes.StoreRegion | undefined | null;
+
+    if (countryCode) {
+      region = await this.getRegion(countryCode);
+    } else {
+      region = await this.retrieveRegion(regionId!);
+    }
+
+    if (!region) {
+      return {
+        response: { products: [], count: 0 },
+        nextPage: null,
+      };
+    }
+
+    const limit = queryParams?.limit || 12;
+    const _pageParam = Math.max(pageParam, 1);
+    const offset = (_pageParam - 1) * limit;
+
+    return this.#sdk.client
+      .fetch<{
+        products: HttpTypes.StoreProduct[];
+        count: number;
+      }>(`/store/products`, {
+        method: 'GET',
+        query: {
+          limit,
+          offset,
+          region_id: region?.id,
+          fields:
+            '*variants.calculated_price,+variants.inventory_quantity,+metadata,+tags',
+          ...queryParams,
+        },
+        // TODO: make dynamic
+        headers: {
+          'x-publishable-api-key': this.#medusaConfig.publishableKey || '',
+        },
+        // next,
+        cache: 'force-cache',
+      })
+      .then(({ products, count }) => {
+        const nextPage = count > offset + limit ? pageParam + 1 : null;
+
+        return {
+          response: {
+            products,
+            count,
+          },
+          nextPage: nextPage,
+          queryParams,
+        };
+      });
   }
 
   public listCollections(queryParams: Record<string, string> = {}): Observable<{
@@ -104,7 +162,6 @@ export class MedusaService {
 
       const regions = await firstValueFrom(this.listRegions());
 
-      console.log(regions);
       if (!regions) {
         return null;
       }
@@ -124,6 +181,21 @@ export class MedusaService {
       return null;
     }
   }
+
+  public retrieveRegion = async (id: string) => {
+    // const next = {
+    //   ...(await getCacheOptions(["regions", id].join("-"))),
+    // }
+
+    return this.#sdk.client
+      .fetch<{ region: HttpTypes.StoreRegion }>(`/store/regions/${id}`, {
+        method: 'GET',
+        // next,
+        cache: 'force-cache',
+      })
+      .then(({ region }) => region)
+      .catch(medusaError);
+  };
 
   /**
    * Products

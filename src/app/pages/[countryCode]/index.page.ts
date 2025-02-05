@@ -1,36 +1,44 @@
-import { Component, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { MedusaService } from '../../services/medusa.service';
-import { NgOptimizedImage } from '@angular/common';
-import { HeroComponent } from '../../shared/hero.component';
+import { Component, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
+import { StoreRegion } from '@medusajs/types';
+import { map } from 'rxjs';
+import { FeaturedProductsComponent } from 'src/app/features/feature-products/featured-products.component';
+import { MedusaService } from 'src/app/services/medusa.service';
+import { HeroComponent } from 'src/app/shared/hero.component';
 
 @Component({
-  selector: 'app-country-code',
+  selector: 'country-code-default-page',
   standalone: true,
-  imports: [NgOptimizedImage, HeroComponent],
+  imports: [HeroComponent, FeaturedProductsComponent],
   template: `
-    <!-- <app-hero /> -->
-
-    <!-- @for (item of products()?.products; track item.id) {
-    <div class="mb-6">
-      <h3 class="text-xl font-semibold text-white-800 mb-2">
-        {{ item.title }}
-      </h3>
-
-      @if (item.thumbnail) {
-      <img
-        [ngSrc]="item.thumbnail"
-        [alt]="item.title"
-        [width]="600"
-        [height]="600"
-        class="rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300"
-      />
-      }
+    <app-hero />
+    <div class="py-12 bg-background">
+      <ul class="flex flex-col gap-x-6">
+        @if(collections() && this.region()){
+        <featured-products [collections]="collections()" [region]="region()" />
+        }
+      </ul>
     </div>
-    } -->
   `,
 })
-export default class CountryCodeComponent {
-  //   #medusa = inject(MedusaService);
-  //   products = toSignal(this.#medusa.productList$());
+export default class CountryCodeIndexPageComponent {
+  private readonly _route = inject(ActivatedRoute);
+  #medusa = inject(MedusaService);
+
+  protected collections = toSignal(this.#medusa.listCollections());
+  protected region = signal<StoreRegion | null | undefined>(null);
+
+  constructor() {
+    this._route.paramMap
+      .pipe(
+        map((params) => params.get('countryCode')),
+        takeUntilDestroyed()
+      )
+      .subscribe(async (regionCode) => {
+        if (regionCode && regionCode.length) {
+          this.region.set(await this.#medusa.getRegion(regionCode));
+        }
+      });
+  }
 }

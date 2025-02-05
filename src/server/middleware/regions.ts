@@ -8,7 +8,6 @@ import {
   parseCookies,
   sendRedirect,
   setCookie,
-  setHeaders,
 } from 'h3';
 
 const BACKEND_URL = import.meta.env['VITE_MEDUSA_INSTANCE_URL'] || '';
@@ -18,42 +17,40 @@ const DEFAULT_REGION = import.meta.env['VITE_DEFAULT_REGION'] || 'us';
 
 export default defineEventHandler(async (event: H3Event) => {
   let redirectUrl = getRequestURL(event).href;
+  const pathname = getRequestURL(event).pathname;
 
-  let cacheIdCookie = parseCookies(event)['_medusa_cache_id'];
+  if (!(redirectUrl.includes('__analog') || pathname.includes('.'))) {
+    let cacheIdCookie = parseCookies(event)['_medusa_cache_id'];
 
-  let cacheId = cacheIdCookie || crypto.randomUUID();
+    let cacheId = cacheIdCookie || crypto.randomUUID();
 
-  const regionMap = await getRegionMap(cacheId);
+    const regionMap = await getRegionMap(cacheId);
 
-  const countryCode = regionMap && (await getCountryCode(event, regionMap));
+    const countryCode = regionMap && (await getCountryCode(event, regionMap));
 
-  const urlHasCountryCode =
-    countryCode &&
-    getRequestURL(event).pathname.split('/')[1].includes(countryCode);
+    const urlHasCountryCode =
+      countryCode && pathname.split('/')[1].includes(countryCode);
 
-  //   // if one of the country codes is in the url and the cache id is not set, set the cache id and redirect
-  if (urlHasCountryCode && !cacheIdCookie) {
-    setCookie(event, '_medusa_cache_id', cacheId, { maxAge: 60 * 60 * 24 * 7 });
-  }
+    // if one of the country codes is in the url and the cache id is not set, set the cache id and redirect
+    if (urlHasCountryCode && !cacheIdCookie) {
+      setCookie(event, '_medusa_cache_id', cacheId, {
+        maxAge: 60 * 60 * 24 * 7,
+      });
+    } else {
+      const redirectPath = pathname === '/' ? '' : pathname;
 
-  //   // check if the url is a static asset
-  // if (request.nextUrl.pathname.includes(".")) {
-  //   return NextResponse.next()
-  // }
+      const queryString = getRequestURL(event).search
+        ? getRequestURL(event).search
+        : '';
 
-  const redirectPath =
-    getRequestURL(event).pathname === '/' ? '' : getRequestURL(event).pathname;
-
-  const queryString = getRequestURL(event).search
-    ? getRequestURL(event).search
-    : '';
-
-  //   // If no country code is set, we redirect to the relevant region.
-  if (!urlHasCountryCode && countryCode) {
-    redirectUrl = `${
-      getRequestURL(event).origin
-    }/${countryCode}${redirectPath}${queryString}`;
-    sendRedirect(event, `${redirectUrl}`, 401);
+      // If no country code is set, we redirect to the relevant region.
+      if (!urlHasCountryCode && countryCode) {
+        redirectUrl = `${
+          getRequestURL(event).origin
+        }/${countryCode}${redirectPath}${queryString}`;
+        sendRedirect(event, `${redirectUrl}`, 401);
+      }
+    }
   }
 });
 

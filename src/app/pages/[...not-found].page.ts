@@ -1,4 +1,4 @@
-import type { RouteMeta } from '@analogjs/router';
+import { RouteMeta } from '@analogjs/router';
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
@@ -9,15 +9,16 @@ export const routeMeta: RouteMeta = {
 };
 
 @Component({
-  selector: 'app-not-found',
+  selector: 'app-not-found-page',
   standalone: true,
   imports: [HlmButtonDirective, RouterLink],
   host: {
     class:
       'flex flex-col gap-4 items-center justify-center min-h-[calc(100vh-64px)]',
   },
-  template: `
-    <h1 class="${hlmH3} text-2xl-semi text-ui-fg-base">Page not found</h1>
+  template: `<h1 class="${hlmH3} text-2xl-semi text-ui-fg-base">
+      Page not found
+    </h1>
     <p class="text-small-regular text-ui-fg-base">
       The page you tried to access does not exist.
     </p>
@@ -29,7 +30,6 @@ export const routeMeta: RouteMeta = {
       variant="link"
     >
       Back home
-    </a>
-  `,
+    </a> `,
 })
 export default class NotFoundComponent {}
