@@ -12,8 +12,18 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     mainFields: ['module'],
   },
+  optimizeDeps: {
+    include: ['@angular/common', '@angular/forms'],
+  },
   ssr: {
-    noExternal: ['@medusajs/js-sdk'],
+    noExternal: [
+      '@spartan-ng/**',
+      '@angular/cdk/**',
+      '@ng-icons/**',
+      'ngx-scrollbar/**',
+      '@analogjs/trpc',
+      '@medusajs/js-sdk',
+    ],
   },
   plugins: [analog(), tsconfigPaths()],
   test: {
