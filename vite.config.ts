@@ -21,7 +21,6 @@ export default defineConfig(({ mode }) => ({
       '@angular/cdk/**',
       '@ng-icons/**',
       'ngx-scrollbar/**',
-      '@analogjs/trpc',
       '@medusajs/js-sdk',
       '@medusajs/types',
     ],
