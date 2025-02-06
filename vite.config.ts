@@ -23,6 +23,7 @@ export default defineConfig(({ mode }) => ({
       'ngx-scrollbar/**',
       '@analogjs/trpc',
       '@medusajs/js-sdk',
+      '@medusajs/types',
     ],
   },
   plugins: [analog(), tsconfigPaths()],
