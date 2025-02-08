@@ -29,7 +29,11 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     analog({
       prerender: {
-        routes: async () => getPrerenderedRoutes(),
+        routes: async () => {
+          const routes = await getPrerenderedRoutes();
+          console.log(routes);
+          return routes || [];
+        },
       },
     }),
     tsconfigPaths(),

@@ -99,7 +99,7 @@ export async function getPrerenderedRoutes() {
   // Also add a base route for each country (e.g., "/us", "/ca", "/gb")
   const baseRoutes = countryCodes.map((countryCode) => `/${countryCode}`);
 
-  console.log([...baseRoutes, ...fileRoutes]);
+  // console.log([...baseRoutes, ...fileRoutes]);
 
   // Combine both sets of routes.
   return [...baseRoutes, ...fileRoutes];
