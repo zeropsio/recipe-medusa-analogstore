@@ -22,8 +22,6 @@ export default defineConfig(({ mode }) => ({
       '@angular/cdk/**',
       '@ng-icons/**',
       'ngx-scrollbar/**',
-      '@medusajs/js-sdk',
-      '@medusajs/types',
     ],
   },
   plugins: [
