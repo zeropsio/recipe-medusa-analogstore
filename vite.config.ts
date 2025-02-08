@@ -3,6 +3,7 @@
 import { defineConfig } from 'vite';
 import analog from '@analogjs/platform';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import { getPrerenderedRoutes } from './tools/pre-render';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -25,7 +26,14 @@ export default defineConfig(({ mode }) => ({
       '@medusajs/types',
     ],
   },
-  plugins: [analog(), tsconfigPaths()],
+  plugins: [
+    analog({
+      prerender: {
+        routes: async () => getPrerenderedRoutes(),
+      },
+    }),
+    tsconfigPaths(),
+  ],
   test: {
     globals: true,
     environment: 'jsdom',
