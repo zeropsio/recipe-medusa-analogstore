@@ -20,6 +20,8 @@ export default defineConfig(({ mode }) => ({
     noExternal: [
       '@spartan-ng/**',
       '@angular/cdk/**',
+      '@medusajs/js-sdk',
+      '@medusajs/types',
       '@ng-icons/**',
       'ngx-scrollbar/**',
     ],
