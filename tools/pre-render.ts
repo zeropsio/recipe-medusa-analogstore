@@ -48,37 +48,47 @@ async function getNormalizedPaths() {
     onlyFiles: true,
   });
 
-  // Process each file path.
   const normalizedPaths = files.map((filePath) => {
-    // fast-glob returns POSIX-style paths (using "/" as separator)
-    const segments = filePath.split('/'); // split into folder segments & file name
+    // Split the file path into segments
+    const segments = filePath.split('/');
+
+    // Filter out any segment that is empty or contains disallowed patterns.
     const filteredSegments = segments.filter((segment) => {
-      // Remove this segment if it contains both '[' and ']' OR both '(' and ')'
+      if (segment.trim() === '') return false;
+      // Remove the segment if it contains both '[' and ']' or both '(' and ')'
       const hasBrackets = segment.includes('[') && segment.includes(']');
       const hasParens = segment.includes('(') && segment.includes(')');
       return !(hasBrackets || hasParens);
     });
+
     // Join the remaining segments back together.
-    return filteredSegments.join('/');
+    let joinedPath = filteredSegments.join('/');
+
+    // Remove a trailing ".page.ts" suffix, if present.
+    joinedPath = joinedPath.replace(/\.page\.ts$/, '');
+
+    return joinedPath;
   });
 
-  return normalizedPaths;
+  // As a final step, remove any empty strings from the array.
+  const cleanedPaths = normalizedPaths.filter((path) => path !== '');
+  return cleanedPaths;
 }
 
 export async function getPrerenderedRoutes() {
   const normalizedPaths = await getNormalizedPaths();
 
-  console.log(normalizedPaths);
+  // console.log(normalizedPaths);
 
   // Get the list of country codes (this is our black-boxed function)
 
   const countryCodes = await getRegionRoutes();
 
-  console.log(countryCodes);
+  // console.log(countryCodes);
 
   // For every file path, create an entry for every country code.
   // Using flatMap to produce a single flattened array.
-  const pathsWithCountry = normalizedPaths.flatMap((filePath) => {
+  const fileRoutes = normalizedPaths.flatMap((filePath) => {
     // Ensure the filePath does not start with a leading slash.
     const cleanedPath = filePath.startsWith('/') ? filePath.slice(1) : filePath;
     return countryCodes.map(
@@ -86,7 +96,11 @@ export async function getPrerenderedRoutes() {
     );
   });
 
-  console.log(pathsWithCountry);
+  // Also add a base route for each country (e.g., "/us", "/ca", "/gb")
+  const baseRoutes = countryCodes.map((countryCode) => `/${countryCode}`);
 
-  return pathsWithCountry;
+  console.log([...baseRoutes, ...fileRoutes]);
+
+  // Combine both sets of routes.
+  return [...baseRoutes, ...fileRoutes];
 }
