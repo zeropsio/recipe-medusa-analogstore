@@ -13,7 +13,7 @@ import { HeroComponent } from 'src/app/shared/hero.component';
   imports: [HeroComponent, FeaturedProductsComponent, JsonPipe],
   template: `
     <app-hero />
-    <h5>Debug</h5>
+    <h5>Debug 1</h5>
     <pre>{{ collections() | json }}</pre>
     <div class="py-12 bg-background">
       <ul class="flex flex-col gap-x-6">
