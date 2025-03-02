@@ -19,7 +19,7 @@ export default defineEventHandler(async (event: H3Event) => {
   let redirectUrl = getRequestURL(event).href;
   const pathname = getRequestURL(event).pathname;
 
-  if (!(redirectUrl.includes('__analog') || pathname.includes('.'))) {
+  if (!(redirectUrl.includes('_analog') || pathname.includes('.'))) {
     let cacheIdCookie = parseCookies(event)['_medusa_cache_id'];
 
     let cacheId = cacheIdCookie || crypto.randomUUID();
@@ -28,8 +28,13 @@ export default defineEventHandler(async (event: H3Event) => {
 
     const countryCode = regionMap && (await getCountryCode(event, regionMap));
 
+    // console.log('MY COUNTRY CODE: ', countryCode);
+    // console.log('MY PATHNAME: ', pathname);
+
     const urlHasCountryCode =
       countryCode && pathname.split('/')[1].includes(countryCode);
+
+    // console.log('MY URL HAS COUNTRY CODE: ', urlHasCountryCode);
 
     // if one of the country codes is in the url and the cache id is not set, set the cache id and redirect
     if (urlHasCountryCode && !cacheIdCookie) {
@@ -45,6 +50,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
       // If no country code is set, we redirect to the relevant region.
       if (!urlHasCountryCode && countryCode) {
+        // console.log('MY COUNTRY CODE REDIRECTING: ', countryCode);
         redirectUrl = `${
           getRequestURL(event).origin
         }/${countryCode}${redirectPath}${queryString}`;

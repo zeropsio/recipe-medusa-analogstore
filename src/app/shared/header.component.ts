@@ -5,7 +5,7 @@ import { HlmSheetModule } from '@spartan-ng/ui-sheet-helm';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [HlmSheetModule, HlmButtonDirective],
+  imports: [HlmSheetModule],
   template: `
     <div class="sticky top-0 inset-x-0 z-50 group">
       <header
