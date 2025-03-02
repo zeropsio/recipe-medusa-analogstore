@@ -1,5 +1,4 @@
-import { JsonPipe } from '@angular/common';
-import { Component, effect, input, OnInit } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'product-price',

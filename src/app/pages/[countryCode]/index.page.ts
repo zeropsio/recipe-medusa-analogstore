@@ -15,8 +15,8 @@ import { load } from './index.server';
   imports: [HeroComponent, FeaturedProductsComponent, JsonPipe],
   template: `
     <app-hero />
-    <h5>Debug 2</h5>
-    <pre>{{ serverData().collections | json }}</pre>
+    <!-- <h5>Debug 2</h5> -->
+    <!-- <pre>{{ serverData().collections | json }}</pre> -->
     <div class="py-12 bg-background">
       <ul class="flex flex-col gap-x-6">
         @if(serverData().collections && serverData().region){

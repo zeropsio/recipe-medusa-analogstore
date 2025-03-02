@@ -31,7 +31,7 @@ import {
       </h2>
     </span>
     <a
-      href="https://github.com/medusajs/nextjs-starter-medusa"
+      href="https://github.com/zeropsio/recipe-medusa-analogstore"
       target="_blank"
       hlmBtn
       class="gap-1.5"

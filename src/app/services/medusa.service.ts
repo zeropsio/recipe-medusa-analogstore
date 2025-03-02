@@ -1,10 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, InjectionToken } from '@angular/core';
 import Medusa, { Config } from '@medusajs/js-sdk';
-import { HttpTypes, StoreProductListResponse } from '@medusajs/types';
-import { catchError, firstValueFrom, from, map, Observable } from 'rxjs';
+import { HttpTypes } from '@medusajs/types';
+import { catchError, firstValueFrom, map, Observable } from 'rxjs';
 import medusaError from '../util/medusa-error';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { convertToLocale } from '../util/money';
 import { getPercentageDiff } from '../util/get-percent-diff';
 
@@ -21,18 +20,9 @@ export function provideMedusaConfig(config: Config) {
 
 @Injectable({ providedIn: 'root' })
 export class MedusaService {
-  #sdk!: Medusa;
   #medusaConfig = inject(MEDUSA_CONFIG);
-  // #http = inject(HttpClient);
-
+  #http = inject(HttpClient);
   #regionMap = new Map<string, HttpTypes.StoreRegion>();
-
-  constructor() {
-    this.#sdk = new Medusa({
-      debug: import.meta.env['NODE_ENV'] === 'development',
-      ...this.#medusaConfig,
-    });
-  }
 
   public async productList({
     pageParam = 1,
@@ -72,13 +62,12 @@ export class MedusaService {
     const _pageParam = Math.max(pageParam, 1);
     const offset = (_pageParam - 1) * limit;
 
-    return this.#sdk.client
-      .fetch<{
+    const response = await firstValueFrom(
+      this.#http.get<{
         products: HttpTypes.StoreProduct[];
         count: number;
-      }>(`/store/products`, {
-        method: 'GET',
-        query: {
+      }>(`${this.#medusaConfig.baseUrl}/store/products`, {
+        params: {
           limit,
           offset,
           region_id: region?.id,
@@ -86,51 +75,51 @@ export class MedusaService {
             '*variants.calculated_price,+variants.inventory_quantity,+metadata,+tags',
           ...queryParams,
         },
-        // TODO: make dynamic
         headers: {
-          'x-publishable-api-key': this.#medusaConfig.publishableKey || '',
+          'x-publishable-api-key':
+            import.meta.env['VITE_MEDUSA_CHANNEL_PUBLISHABLE_KEY'] || '',
         },
-        // next,
-        cache: 'force-cache',
       })
-      .then(({ products, count }) => {
-        const nextPage = count > offset + limit ? pageParam + 1 : null;
+    );
 
-        return {
-          response: {
-            products,
-            count,
-          },
-          nextPage: nextPage,
-          queryParams,
-        };
-      });
+    if (!response) {
+      return {
+        response: { products: [], count: 0 },
+        nextPage: null,
+      };
+    }
+
+    const { products, count } = response;
+
+    const nextPage = count > offset + limit ? pageParam + 1 : null;
+    return {
+      response: {
+        products,
+        count,
+      },
+      nextPage: nextPage,
+      queryParams,
+    };
   }
 
   public listCollections(queryParams: Record<string, string> = {}): Observable<{
     collections: HttpTypes.StoreCollection[];
     count: number;
   }> {
-    // const next = {
-    //   ...(await getCacheOptions("collections")),
-    // }
-
-    // queryParams.limit = queryParams.limit || "100"
-    // queryParams.offset = queryParams.offset || "0"
-
-    return from(
-      this.#sdk.client.fetch<{
+    return this.#http
+      .get<{
         collections: HttpTypes.StoreCollection[];
         count: number;
-      }>('/store/collections', {
-        query: queryParams,
-        // next,
-        cache: 'force-cache',
+      }>(`${this.#medusaConfig.baseUrl}/store/collections`, {
+        params: queryParams,
+        headers: {
+          'x-publishable-api-key':
+            import.meta.env['VITE_MEDUSA_CHANNEL_PUBLISHABLE_KEY'] || '',
+        },
       })
-    ).pipe(
-      map(({ collections }) => ({ collections, count: collections.length }))
-    );
-    // .then(({ collections }) => ({ collections, count: collections.length }));
+      .pipe(
+        map(({ collections }) => ({ collections, count: collections.length }))
+      );
   }
 
   /**
@@ -138,20 +127,20 @@ export class MedusaService {
    */
 
   public listRegions(): Observable<HttpTypes.StoreRegion[]> {
-    return from(
-      this.#sdk.client.fetch<{ regions: HttpTypes.StoreRegion[] }>(
-        `/store/regions`,
+    return this.#http
+      .get<{ regions: HttpTypes.StoreRegion[] }>(
+        `${this.#medusaConfig.baseUrl}/store/regions`,
         {
-          method: 'GET',
-          cache: 'force-cache',
+          headers: {
+            'x-publishable-api-key':
+              import.meta.env['VITE_MEDUSA_CHANNEL_PUBLISHABLE_KEY'] || '',
+          },
         }
       )
-    ).pipe(
-      map(({ regions }) => regions),
-      catchError((error) => medusaError(error))
-    );
-    // .then(({ regions }) => regions)
-    // .catch(medusaError);
+      .pipe(
+        map(({ regions }) => regions),
+        catchError((error) => medusaError(error))
+      );
   }
 
   public async getRegion(countryCode: string) {
@@ -183,18 +172,22 @@ export class MedusaService {
   }
 
   public retrieveRegion = async (id: string) => {
-    // const next = {
-    //   ...(await getCacheOptions(["regions", id].join("-"))),
-    // }
-
-    return this.#sdk.client
-      .fetch<{ region: HttpTypes.StoreRegion }>(`/store/regions/${id}`, {
-        method: 'GET',
-        // next,
-        cache: 'force-cache',
-      })
-      .then(({ region }) => region)
-      .catch(medusaError);
+    try {
+      const response = await firstValueFrom(
+        this.#http.get<{ region: HttpTypes.StoreRegion }>(
+          `${this.#medusaConfig.baseUrl}/store/regions/${id}`,
+          {
+            headers: {
+              'x-publishable-api-key':
+                import.meta.env['VITE_MEDUSA_CHANNEL_PUBLISHABLE_KEY'] || '',
+            },
+          }
+        )
+      );
+      return response.region;
+    } catch (error) {
+      return medusaError(error);
+    }
   };
 
   /**
@@ -273,6 +266,52 @@ export class MedusaService {
       product,
       cheapestPrice: cheapestPrice(),
       variantPrice: variantPrice(),
+    };
+  }
+
+  /**
+   * Server-side methods
+   */
+
+  /**
+   * Gets collections and region data for a country code
+   * This method is designed to be used in server-side load functions
+   * @param countryCode The country code to get the region for
+   * @param medusaClient Optional Medusa client instance for server-side use
+   */
+  public async getCollectionsAndRegion(
+    countryCode: string,
+    medusaClient?: Medusa
+  ): Promise<{
+    collections: { collections: HttpTypes.StoreCollection[]; count: number };
+    region: HttpTypes.StoreRegion | undefined;
+  }> {
+    if (!medusaClient) {
+      throw new Error('Medusa client is required for server-side operations');
+    }
+
+    // Fetch collections
+    const { collections } = await medusaClient.store.collection.list();
+
+    // Fetch regions and build region map
+    const { regions } = await medusaClient.store.region.list();
+
+    const regionMap = new Map<string, HttpTypes.StoreRegion>();
+    regions.forEach((region: HttpTypes.StoreRegion) => {
+      region.countries?.forEach((c) => {
+        regionMap.set(c.iso_2 ?? '', region);
+      });
+    });
+
+    // Get region for the country code
+    const region = regionMap.get(countryCode || 'us');
+
+    return {
+      collections: {
+        collections,
+        count: collections.length,
+      },
+      region,
     };
   }
 }

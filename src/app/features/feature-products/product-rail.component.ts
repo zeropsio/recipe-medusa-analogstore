@@ -1,9 +1,8 @@
 import { Component, inject, input, OnInit, signal } from '@angular/core';
 import { HttpTypes } from '@medusajs/types';
-// import { MedusaService } from 'src/app/services/medusa.service';
 import { ProductPreviewComponent } from '../products/product-preview.component';
 import { HttpClient } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
+import { MedusaService } from 'src/app/services/medusa.service';
 
 @Component({
   selector: 'product-rail',
@@ -27,31 +26,19 @@ import { firstValueFrom } from 'rxjs';
 })
 export class ProductRailComponent implements OnInit {
   http = inject(HttpClient);
-  // #medusa = inject(MedusaService);
+  #medusa = inject(MedusaService);
   products = signal<HttpTypes.StoreProduct[]>([]);
 
   public collection = input<HttpTypes.StoreCollection | undefined>();
   public region = input.required<HttpTypes.StoreRegion | null | undefined>();
 
-  async ngOnInit(): Promise<void> {
-    // Using http client should ensure this gets pre-rendered
-    const { products } = await firstValueFrom(
-      this.http.get<{
-        products: HttpTypes.StoreProduct[];
-      }>(`${import.meta.env['VITE_MEDUSA_BACKEND_URL']}/store/products`, {
-        headers: {
-          'x-publishable-api-key': import.meta.env[
-            'VITE_MEDUSA_CHANNEL_PUBLISHABLE_KEY'
-          ],
-        },
+  ngOnInit(): void {
+    this.#medusa
+      .productList({
+        regionId: this.region()?.id || 'US',
       })
-    );
-
-    // const {
-    //   response: { products },
-    // } = await this.#medusa.productList({
-    //   regionId: this.region()?.id || 'US',
-    // });
-    this.products.set(products);
+      .then(({ response: { products } }) => {
+        this.products.set(products);
+      });
   }
 }
