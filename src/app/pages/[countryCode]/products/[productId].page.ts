@@ -5,9 +5,6 @@ import { RouterOutlet } from '@angular/router';
   selector: 'app-product-detail-layout-page',
   standalone: true,
   imports: [RouterOutlet],
-  template: `
-    <h2>Product-id PAGE</h2>
-    <router-outlet />
-  `,
+  template: ` <router-outlet /> `,
 })
 export default class ProductDetailLayoutPageComponent {}

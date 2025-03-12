@@ -24,12 +24,13 @@ import { SkeletonRelatedProductsComponent } from './components/skeleton-related-
     RelatedProductsComponent,
     SkeletonRelatedProductsComponent,
   ],
-  template: ` <div
-      class="content-container flex flex-col small:flex-row small:items-start py-6 relative"
+  template: `
+    <div
+      class="container flex flex-col sm:flex-row sm:items-start py-6 relative"
       data-testid="product-container"
     >
       <div
-        class="flex flex-col small:sticky small:top-48 small:py-0 small:max-w-[300px] w-full py-8 gap-y-6"
+        class="flex flex-col sm:sticky sm:top-48 sm:py-0 sm:max-w-[300px] w-full py-8 gap-y-6"
       >
         <product-info [product]="product()" />
         <product-tabs [product]="product()" />
@@ -38,11 +39,10 @@ import { SkeletonRelatedProductsComponent } from './components/skeleton-related-
         <image-gallery [images]="product()?.images || []" />
       </div>
       <div
-        class="flex flex-col small:sticky small:top-48 small:py-0 small:max-w-[300px] w-full py-8 gap-y-12"
+        class="flex flex-col sm:sticky sm:top-48 sm:py-0 sm:max-w-[300px] w-full py-8 gap-y-12"
       >
         <product-onboarding-cta />
 
-        <!-- Replace Suspense with ngIf -->
         @if(isLoading){
         <product-actions
           [disabled]="true"
@@ -54,27 +54,19 @@ import { SkeletonRelatedProductsComponent } from './components/skeleton-related-
         }
       </div>
     </div>
-    <div
-      class="content-container py-12"
-      data-testid="related-products-container"
-    >
+    <!-- <div class="container py-12" data-testid="related-products-container">
       @if(isLoadingRelated){
       <skeleton-related-products />
       } @else {
       <related-products [product]="product()" [countryCode]="countryCode()" />
       }
-    </div>`,
+    </div> -->
+  `,
 })
 export class ProductDetailComponent {
   public product = input<HttpTypes.StoreProduct>();
   public region = input<HttpTypes.StoreRegion>();
   public countryCode = input<string>();
-
-  constructor() {
-    effect(() => {
-      console.log(this.product());
-    });
-  }
 
   isLoading = true;
   isLoadingRelated = true;

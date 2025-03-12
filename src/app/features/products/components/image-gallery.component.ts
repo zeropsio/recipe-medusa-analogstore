@@ -9,18 +9,18 @@ interface ProductImage {
 @Component({
   selector: 'image-gallery',
   standalone: true,
-  imports: [NgFor, NgIf],
   template: `
-    <div class="flex flex-col gap-y-4">
-      <div class="w-full aspect-square relative">
+    <div class="flex flex-col gap-y-4 sm:mx-16">
+      <div class="w-full aspect-square relative ">
+        @if(images && images.length > 0){
         <img
-          *ngIf="images && images.length > 0"
           [src]="selectedImage?.url || images[0]?.url"
           alt="Product image"
           class="w-full h-full object-cover rounded-lg"
         />
+        }
       </div>
-      <div class="flex gap-x-2 overflow-x-auto">
+      <!-- <div class="flex gap-x-2 overflow-x-auto">
         <div
           *ngFor="let image of images"
           class="w-24 h-24 relative cursor-pointer"
@@ -34,7 +34,7 @@ interface ProductImage {
             [class.border-black]="selectedImage?.id === image.id"
           />
         </div>
-      </div>
+      </div> -->
     </div>
   `,
 })
