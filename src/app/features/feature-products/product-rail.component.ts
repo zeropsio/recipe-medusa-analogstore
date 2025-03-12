@@ -1,7 +1,6 @@
 import { Component, inject, input, OnInit, signal } from '@angular/core';
 import { HttpTypes } from '@medusajs/types';
 import { ProductPreviewComponent } from '../products/product-preview.component';
-import { HttpClient } from '@angular/common/http';
 import { MedusaService } from 'src/app/services/medusa.service';
 
 @Component({
@@ -25,20 +24,17 @@ import { MedusaService } from 'src/app/services/medusa.service';
   </div>`,
 })
 export class ProductRailComponent implements OnInit {
-  http = inject(HttpClient);
-  #medusa = inject(MedusaService);
-  products = signal<HttpTypes.StoreProduct[]>([]);
+  private _medusa = inject(MedusaService);
+  protected products = signal<HttpTypes.StoreProduct[]>([]);
 
   public collection = input<HttpTypes.StoreCollection | undefined>();
   public region = input.required<HttpTypes.StoreRegion | null | undefined>();
 
   ngOnInit(): void {
-    this.#medusa
+    this._medusa
       .productList({
         regionId: this.region()?.id || 'US',
       })
-      .then(({ response: { products } }) => {
-        this.products.set(products);
-      });
+      .then(({ response: { products } }) => this.products.set(products));
   }
 }
