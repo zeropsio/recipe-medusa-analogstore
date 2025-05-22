@@ -14,7 +14,7 @@ export default defineConfig(({ mode }) => ({
   ssr: {
     noExternal: ['@medusajs/js-sdk']
   },
-  plugins: [analog()],
+  plugins: [analog({ ssr: false })],
   test: {
     globals: true,
     environment: 'jsdom',
