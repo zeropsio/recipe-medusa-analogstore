@@ -21,9 +21,7 @@ export const load = async ({
   });
 
   // Fetch collections using Medusa SDK
-  const { collections } = await medusaClient.store.collection.list();
-
-  const { regions } = await medusaClient.store.region.list();
+  const [{ collections }, { regions }] =await  Promise.all([medusaClient.store.collection.list(), medusaClient.store.region.list()]);
 
   const regionMap = new Map<string, HttpTypes.StoreRegion>();
   regions.forEach((region: HttpTypes.StoreRegion) => {
